@@ -6,6 +6,7 @@ export default defineConfig({
   use: {
     baseURL: process.env.baseURL,
     ...devices['Desktop Chrome'],
+    browserName: 'chromium',
     channel: 'chrome',
     ignoreHTTPSErrors: true,
     video: 'on',
