@@ -15,6 +15,7 @@ export const getEnvVars = (
 	const result: string[] = [];
 
 	parsed &&
+		variables &&
 		variables.forEach((variable) => {
 			variable = variable.toUpperCase();
 			result.push(parsed[variable]);

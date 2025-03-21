@@ -1,6 +1,7 @@
 import { test, expect, request, type Page } from '@playwright/test';
-import { HttpMethod } from '../enums/HttpMethod';
-require('dotenv').config();
+import { HttpMethod } from '../enums';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export class Playwright {
 	it: typeof test;
@@ -51,7 +52,8 @@ export class Playwright {
 	) {
 		const response = page.waitForResponse(
 			(response) =>
-				response.request().method() === method && response.url().includes(endpoint),
+				response.request().method() === method &&
+				response.url().includes(endpoint),
 		);
 
 		return (await response).json();
