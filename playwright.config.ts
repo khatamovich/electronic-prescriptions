@@ -1,10 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
-require('dotenv').config();
+import dotenv from 'dotenv';
+import { getEnvVars, getPath } from './utils';
+dotenv.config();
 
 export default defineConfig({
   outputDir: 'results',
   use: {
-    baseURL: process.env.baseURL,
+    baseURL: getEnvVars(['base_url'], { useActiveEnv: true })[0],
     ...devices['Desktop Chrome'],
     browserName: 'chromium',
     channel: 'chrome',
@@ -19,7 +21,7 @@ export default defineConfig({
     {
       name: 'Авторизация',
       testDir: 'setup',
-      testMatch: 'setup/auth.setup.ts',
+      testMatch: getPath('setup/auth.setup.ts'),
     },
     {
       name: 'Электронные рецепты',

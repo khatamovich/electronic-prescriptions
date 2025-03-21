@@ -58,4 +58,14 @@ export class Playwright {
 
 		return (await response).json();
 	}
+
+	async setStorageItems(page: Page, storageItems: object): Promise<void> {
+		await page.evaluate((storageItems) => {
+			const keys = Object.keys(storageItems);
+
+			keys.forEach((key) => {
+				localStorage.setItem(key, storageItems[key]);
+			});
+		}, storageItems);
+	}
 }

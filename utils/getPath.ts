@@ -1,3 +1,3 @@
-import path from 'path';
+import { resolve } from 'path';
 
-export const getPath = (relativePath: string) => path.join(relativePath);
+export const getPath = (path: string) => resolve(path);

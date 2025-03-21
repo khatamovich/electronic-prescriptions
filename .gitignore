@@ -9,3 +9,4 @@ node_modules/
 /docs
 /*.env*
 /**/.DS_Store
+documentation.js
