@@ -1,9 +1,9 @@
-import { Playwright } from '../classes/Playwright';
-import { getEnvVars, getPath } from '../utils';
+import { Playwright } from '../classes';
+import { getEnvVars, getPath, log } from '../utils';
 import { TokenPurpose } from '../enums';
 import { existsSync } from 'fs';
 
-const { log, it: setup, setStorageItems } = new Playwright();
+const { it: setup, setStorageItems } = new Playwright();
 
 setup('Авторизация', async ({ page }) => {
 	const [access_token, device_id] = getEnvVars(['access_token', 'device_id'], {

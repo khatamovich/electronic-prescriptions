@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 
 export const getEnvVars = (
 	variables: string[],
-	options: { useActiveEnv: boolean } = { useActiveEnv: true },
+	options: { useActiveEnv: boolean } = { useActiveEnv: false },
 ): string[] => {
 	const env = process.env.ENV;
 

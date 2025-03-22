@@ -14,17 +14,14 @@ export class Playwright {
 		this.suite = test.describe;
 		this.expect = expect;
 		this.httpMethod = HttpMethod.GET;
-	}
-
-	log(input: any, options: { type: string } = { type: 'log' }) {
-		if (process.env.ENV === 'production') return;
-
-		console[options?.type](input);
+		this.APIContext = this.APIContext.bind(this);
+		this.getResponse = this.getResponse.bind(this);
+		this.setStorageItems = this.setStorageItems.bind(this);
 	}
 
 	async APIContext(headers: {}) {
 		const context = await request.newContext({
-			baseURL: process.env.API_BASE_URL as string,
+			baseURL: process.env.API_URL as string,
 			extraHTTPHeaders: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json',
@@ -35,7 +32,7 @@ export class Playwright {
 
 		return async (
 			endpoint: string,
-			options: { method: typeof this.httpMethod; data: {} } = {
+			options: { method: typeof this.httpMethod; data?: object } = {
 				method: HttpMethod.GET,
 				data: {},
 			},
@@ -58,10 +55,9 @@ export class Playwright {
 	) {
 		const response = page.waitForResponse(
 			(response) =>
-				response.request().method() === method &&
+				response.request().method() === method.toUpperCase() &&
 				response.url().includes(endpoint),
 		);
-
 		return (await response).json();
 	}
 
