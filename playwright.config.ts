@@ -7,18 +7,24 @@ const [baseURL] = getEnvVars(['base_url'], { useActiveEnv: true });
 
 export default defineConfig({
   outputDir: 'results',
-  globalTimeout: 10000,
+  timeout: 15000,
   use: {
     baseURL,
     ...devices['Desktop Chrome'],
     browserName: 'chromium',
     channel: 'chrome',
-    video: 'on',
-    ignoreHTTPSErrors: true,
-    viewport: {
-      width: 1710,
-      height: 1120,
+    video: {
+      mode: 'on',
+      size: {
+        width: 1920,
+        height: 1080,
+      },
     },
+    viewport: {
+      width: 1920,
+      height: 1080,
+    },
+    ignoreHTTPSErrors: true,
     storageState: getPath(`storage/.auth/${process.env.ENV}.json`),
   },
   projects: [
@@ -35,7 +41,6 @@ export default defineConfig({
     },
     {
       name: ' Electronic Prescriptions',
-      dependencies: ['Patient setup'],
     },
   ],
 });

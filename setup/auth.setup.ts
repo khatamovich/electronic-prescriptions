@@ -1,4 +1,4 @@
-import { Playwright } from '../classes';
+import { Playwright } from '../Playwright';
 import { getEnvVars, getPath, log } from '../utils';
 import { TokenPurpose } from '../enums';
 import { existsSync } from 'fs';

@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import dayjs from 'dayjs';
-import { log } from './';
+import { log } from './log';
 
 export const writeFile = (
 	path: string,

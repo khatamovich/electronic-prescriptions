@@ -1,11 +1,15 @@
-import { Playwright } from '../classes';
-import { getEnvVars, getPath, useRole, writeFile, log } from '../utils';
+import { Playwright } from '../Playwright';
+import { getEnvVars, getPath, writeFile } from '../utils';
 import { HttpMethod, Role } from '../enums';
+import { Base } from '../features/base';
 
 const { it: setup, getResponse, APIContext } = new Playwright();
 
-setup('Поиск и сохранение пациента', async ({ page }) => {
-	await page.goto('/auth/role-selection');
+setup.only('Поиск и сохранение пациента', async ({ page }) => {
+	const base = new Base(page);
+
+	await page.goto('/');
+
 	const [ENV, loginAsRoleAPI, findByDocsAPI, patientPinfl] = getEnvVars([
 		'env',
 		'login_as_role_api_endpoint',
@@ -13,7 +17,8 @@ setup('Поиск и сохранение пациента', async ({ page }) =>
 		'patient_pinfl',
 	]);
 
-	await useRole(page, Role.Doctor);
+	const doctorCard = page.getByRole('heading', { name: Role.Doctor });
+	await doctorCard.click();
 
 	const { access_token, token_type } = await getResponse(
 		page,
