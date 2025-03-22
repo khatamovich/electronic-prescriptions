@@ -3,15 +3,17 @@ import dotenv from 'dotenv';
 import { getEnvVars, getPath } from './utils';
 dotenv.config();
 
+const [baseURL] = getEnvVars(['base_url'], { useActiveEnv: true });
+
 export default defineConfig({
   outputDir: 'results',
   use: {
-    baseURL: getEnvVars(['base_url'], { useActiveEnv: true })[0],
+    baseURL,
     ...devices['Desktop Chrome'],
     browserName: 'chromium',
     channel: 'chrome',
-    ignoreHTTPSErrors: true,
     video: 'on',
+    ignoreHTTPSErrors: true,
     viewport: {
       width: 1710,
       height: 1120,
@@ -19,12 +21,15 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'Авторизация',
+      name: 'Setup',
       testDir: 'setup',
-      testMatch: getPath('setup/auth.setup.ts'),
+      testMatch: getPath('*setup.ts'),
     },
     {
-      name: 'Электронные рецепты',
+      name: ' Electronic Prescriptions',
+      use: {
+        storageState: getPath(`storage/.auth/${process.env.ENV}.json`),
+      },
     },
   ],
 });

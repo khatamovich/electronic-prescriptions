@@ -3,7 +3,7 @@ import { getEnvVars, getPath } from '../utils';
 import { TokenPurpose } from '../enums';
 import { existsSync } from 'fs';
 
-const { it: setup, setStorageItems } = new Playwright();
+const { log, it: setup, setStorageItems } = new Playwright();
 
 setup('Авторизация', async ({ page }) => {
 	const [access_token, device_id] = getEnvVars(['access_token', 'device_id'], {
@@ -28,5 +28,5 @@ setup('Авторизация', async ({ page }) => {
 		return;
 	}
 
-	console.warn(`Using old version of ${authStoragePath}`);
+	log(`Using old version of ${authStoragePath}`);
 });

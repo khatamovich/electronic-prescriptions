@@ -6,7 +6,7 @@
     "start": "npx playwright test",
     "trace": "npx playwright test --ui",
     "debug": "npx playwright test --debug",
-    "auth": "npx playwright test --project='Авторизация'"
+    "auth": "npx playwright test --project='Setup'"
   },
   "keywords": [],
   "author": "",

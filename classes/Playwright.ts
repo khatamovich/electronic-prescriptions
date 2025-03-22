@@ -16,6 +16,12 @@ export class Playwright {
 		this.httpMethod = HttpMethod.GET;
 	}
 
+	log(input: any, options: { type: string } = { type: 'log' }) {
+		if (process.env.ENV === 'production') return;
+
+		console[options?.type](input);
+	}
+
 	async APIContext(headers: {}) {
 		const context = await request.newContext({
 			baseURL: process.env.API_BASE_URL as string,
