@@ -25,7 +25,6 @@ export default defineConfig({
       height: 1080,
     },
     ignoreHTTPSErrors: true,
-    storageState: getPath(`storage/.auth/${process.env.ENV}.json`),
   },
   projects: [
     {
@@ -38,9 +37,15 @@ export default defineConfig({
       dependencies: ['Auth setup'],
       testDir: 'setup',
       testMatch: getPath('patient.setup.ts'),
+      use: {
+        storageState: getPath(`storage/.auth/${process.env.ENV}.json`),
+      },
     },
     {
       name: ' Electronic Prescriptions',
+      use: {
+        storageState: getPath(`storage/.auth/${process.env.ENV}.json`),
+      },
     },
   ],
 });

@@ -14,7 +14,7 @@ suite('@smoke-simple Обычный рецепт', async () => {
 
 	// *** Если данные врача либо пациента не обнаружены, прекратить запуск кода и сообщить о дальнейших действиях ***
 	if (!patient || !doctor)
-		throw new Error('Run "Patient setup" project & try again');
+		throw new Error("Execute <npm run setup> command and then try again");
 
 	// *** Если данные врача либо пациента обнаружены, создать новый API контекст и продолжить запуск остального кода ***
 	const { access_token, token_type } = doctor;
@@ -134,7 +134,7 @@ suite('@smoke-simple Обычный рецепт', async () => {
 		await sign.assertStatus(Status.Approve);
 	});
 
-	it.only('Выдача', async ({ page }) => {
+	it('Выдача', async ({ page }) => {
 		const [prescription] = getDirFiles(getPath('storage/.tmp'), 'prescription');
 		const { number, safe_code } = prescription;
 

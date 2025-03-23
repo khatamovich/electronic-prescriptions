@@ -4,7 +4,7 @@ import { HttpMethod, Role } from '../enums';
 
 const { it: setup, getResponse, APIContext } = new Playwright();
 
-setup('Поиск и сохранение пациента', async ({ page }) => {
+setup('@setup Поиск и сохранение пациента', async ({ page }) => {
 	const [doctor] = getDirFiles(getPath('storage/.tmp'), 'doctor');
 	const [patient] = getDirFiles(getPath('storage/.patient'));
 

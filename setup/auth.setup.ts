@@ -5,7 +5,7 @@ import { existsSync } from 'fs';
 
 const { it: setup, setStorageItems } = new Playwright();
 
-setup('Авторизация', async ({ page }) => {
+setup('@setup Авторизация', async ({ page }) => {
 	const [access_token, device_id] = getEnvVars(['access_token', 'device_id'], {
 		useActiveEnv: true,
 	});
