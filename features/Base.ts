@@ -24,7 +24,7 @@ export class Base {
 
 	async assertPatient(surname: string, name: string, patronymic: string) {
 		await expect(
-			this.page.getByText(`${surname} ${name} ${patronymic}`),
+			this.page.getByText(`${surname} ${name} ${patronymic || ''}`),
 		).toBeVisible();
 	}
 

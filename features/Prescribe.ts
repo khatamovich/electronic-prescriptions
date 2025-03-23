@@ -10,7 +10,7 @@ export class Prescribe extends Base {
 	prescribeBtn: Locator;
 	INN: Locator;
 	dosageForm: Locator;
-	substanceDosage: Locator;
+	dose: Locator;
 	frequency: Locator;
 	singleDose: Locator;
 	route: Locator;
@@ -19,7 +19,14 @@ export class Prescribe extends Base {
 	continueBtn: Locator;
 	saveBtn: Locator;
 
+	INNValue: string;
+	dosageFormValue: string;
+	doseValue: string;
+	frequencyValue: string;
+	singleDoseValue: string;
+	routeValue: string;
 	durationValue: string;
+	drugCountValue: string;
 
 	constructor(page: Page) {
 		super(page);
@@ -27,7 +34,7 @@ export class Prescribe extends Base {
 		this.prescribeBtn = page.getByRole('button', { name: 'Выписать' });
 		this.INN = page.getByRole('combobox', { name: '* МНН' });
 		this.dosageForm = page.getByRole('combobox', { name: 'Форма выпуска' });
-		this.substanceDosage = page.getByRole('combobox', {
+		this.dose = page.getByRole('combobox', {
 			name: '* Доза',
 			exact: true,
 		});
@@ -73,6 +80,8 @@ export class Prescribe extends Base {
 		const { title } = INNsResponse.data[randomIndex];
 
 		await this.page.getByRole('option', { name: title }).click();
+
+		this.INNValue = title;
 	}
 
 	async setDosageForm() {
@@ -88,20 +97,21 @@ export class Prescribe extends Base {
 		const { title } = dosageFormsResponse.data[randomIndex];
 
 		await this.page.getByRole('option', { name: title }).click();
+
+		this.dosageFormValue = title;
 	}
 
 	async setDose() {
-		await this.substanceDosage.click();
+		await this.dose.click();
 
-		const substanceDosagesResponse = await getResponse(
+		const dosesResponse = await getResponse(
 			this.page,
 			'/api/prescriptions/v1/substance-dosages',
 		);
 
-		const randomIndex = getRandomNumber(substanceDosagesResponse.data.length);
+		const randomIndex = getRandomNumber(dosesResponse.data.length);
 
-		const { dosage, measurement_unit } =
-			substanceDosagesResponse.data[randomIndex];
+		const { dosage, measurement_unit } = dosesResponse.data[randomIndex];
 
 		await this.page
 			.getByRole('option', {
@@ -109,6 +119,8 @@ export class Prescribe extends Base {
 				exact: true,
 			})
 			.click();
+
+		this.doseValue = `${dosage} ${measurement_unit.title}`;
 	}
 
 	async setFrequency() {
@@ -136,6 +148,8 @@ export class Prescribe extends Base {
 		const { title } = routesResponse.data[randomIndex];
 
 		await this.page.getByRole('option', { name: title }).click();
+
+		this.routeValue = title;
 	}
 
 	async setDuration(duration: string) {

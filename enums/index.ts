@@ -1,5 +1,5 @@
 import { HttpMethod } from './HttpMethod';
 import { TokenPurpose, Role } from './Auth';
-import { PrescriptionType } from './Prescription';
+import { PrescriptionType, Status } from './Prescription';
 
-export { HttpMethod, TokenPurpose, Role, PrescriptionType };
+export { HttpMethod, TokenPurpose, Role, PrescriptionType, Status };

@@ -5,7 +5,7 @@ import { Base } from '../features/base';
 
 const { it: setup, getResponse, APIContext } = new Playwright();
 
-setup.only('Поиск и сохранение пациента', async ({ page }) => {
+setup('Поиск и сохранение пациента', async ({ page }) => {
 	const base = new Base(page);
 
 	await page.goto('/');
