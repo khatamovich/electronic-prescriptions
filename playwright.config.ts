@@ -28,13 +28,13 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'Auth setup',
+      name: 'auth-setup',
       testDir: 'setup',
       testMatch: getPath('auth.setup.ts'),
     },
     {
-      name: 'Patient setup',
-      dependencies: ['Auth setup'],
+      name: 'patient-setup',
+      dependencies: ['auth-setup'],
       testDir: 'setup',
       testMatch: getPath('patient.setup.ts'),
       use: {
@@ -42,7 +42,7 @@ export default defineConfig({
       },
     },
     {
-      name: ' Electronic Prescriptions',
+      name: 'prescriptions',
       use: {
         storageState: getPath(`storage/.auth/${process.env.ENV}.json`),
       },

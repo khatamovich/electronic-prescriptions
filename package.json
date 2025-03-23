@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "npx playwright test",
+    "start": "npx playwright test --project prescriptions",
     "debug": "npx playwright test --debug",
-    "setup": "npx playwright test ./setup"
+    "setup": "npx playwright test --project patient-setup"
   },
   "keywords": [],
   "author": "",
