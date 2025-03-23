@@ -5,7 +5,7 @@ import { HttpMethod } from '../enums';
 
 const { getResponse } = new Playwright();
 
-export class Signing extends Verify {
+export class Sign extends Verify {
 	signBtn: Locator;
 	signingTitle: Locator;
 	enterCodeInput: Locator;

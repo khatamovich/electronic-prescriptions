@@ -15,7 +15,5 @@ export const getDirFiles = (dirPath: string, query: string = ''): any => {
 		result.push(item);
 	});
 
-	if (result.length < 1) log('Directory is empty');
-
 	return result;
 };

@@ -1,6 +1,6 @@
 import { type Page, type Locator } from '@playwright/test';
 import { Playwright } from '../Playwright';
-import { Base } from './base';
+import { Base } from './';
 import { PrescriptionType } from '../enums';
 import { getRandomNumber } from '../utils';
 

@@ -5,7 +5,7 @@
   "scripts": {
     "start": "npx playwright test",
     "debug": "npx playwright test --debug",
-    "auth": "npx playwright test --project='Setup'"
+    "setup": "npx playwright test --project='Patient setup'"
   },
   "keywords": [],
   "author": "",

@@ -1,5 +1,5 @@
 import { Playwright } from '../Playwright';
-import { Base, Prescribe, Verify, Edit, Signing } from '../features';
+import { Base, Prescribe, Verify, Edit, Sign, Find } from '../features';
 import { getPath, getDirFiles, writeFile, getEnvVars } from '../utils';
 import { HttpMethod, PrescriptionType, Role, Status } from '../enums';
 
@@ -18,7 +18,7 @@ suite('@smoke-simple Обычный рецепт', async () => {
 
 	// *** Если данные врача либо пациента обнаружены, создать новый API контекст и продолжить запуск остального кода ***
 	const { access_token, token_type } = doctor;
-	const { id: patientId, surname, name, patronymic } = patient;
+	const { id: patientId, surname, name, patronymic, pinfl } = patient;
 
 	// *** Запускать для каждого теста ***
 	beforeEach(async ({ page }) => {
@@ -114,27 +114,41 @@ suite('@smoke-simple Обычный рецепт', async () => {
 		const [prescription] = getDirFiles(getPath('storage/.tmp'), 'prescription');
 		const { number } = prescription;
 
-		const signing = new Signing(page);
+		const sign = new Sign(page);
 
-		await signing.useRole(Role.Doctor);
-		await signing.gotoPrescriptions();
-		await signing.viewPrescription(number);
-		await signing.clickSignBtn();
-		await signing.assertSigningInterface();
+		await sign.useRole(Role.Doctor);
+		await sign.gotoPrescriptions();
+		await sign.viewPrescription(number);
+		await sign.clickSignBtn();
+		await sign.assertSigningInterface();
 
 		const signingCode = (
 			await request('/api/user/identification-token?type=only_integer')
 		).token;
 
-		await signing.enterSigningCode(signingCode);
-		await signing.assertSigningCode(signingCode);
-		await signing.submitSigning();
-		await signing.assertSigningResult();
-		await signing.viewPrescription(number);
-		await signing.assertStatus(Status.Approve);
+		await sign.enterSigningCode(signingCode);
+		await sign.assertSigningCode(signingCode);
+		await sign.submitSigning();
+		await sign.assertSigningResult();
+		await sign.viewPrescription(number);
+		await sign.assertStatus(Status.Approve);
 	});
 
-	it('Выдача', async ({ page }) => {});
+	it.only('Выдача', async ({ page }) => {
+		const [prescription] = getDirFiles(getPath('storage/.tmp'), 'prescription');
+		const { number, safe_code } = prescription;
+
+		const find = new Find(page);
+
+		await find.useRole(Role.Pharmacist, '/recipes**');
+		await find.clickIssueDrugsBtn();
+		await find.assertSearchInterface();
+		await find.enterPINFL(pinfl);
+		await find.enterSafeCode(safe_code);
+		await find.assertSubmitBtn();
+		await find.submitSearch();
+		await page.waitForTimeout(1000);
+	});
 
 	// it('Верификация корректности выдачи', async ({ page }) => {});
 

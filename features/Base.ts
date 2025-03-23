@@ -13,9 +13,9 @@ export class Base {
 		this.plusRecipeBtn = page.getByRole('button', { name: '+ Рецепт' });
 	}
 
-	async useRole(role: Role) {
-		await this.page.getByRole('heading', { name: role }).click();
-		await this.page.waitForURL('/patients**');
+	async useRole(role: Role, waitURL: string = '/patients**') {
+		await this.page.getByRole('heading', { name: role }).first().click();
+		await this.page.waitForURL(waitURL);
 	}
 
 	async gotoMC(patientId: string) {

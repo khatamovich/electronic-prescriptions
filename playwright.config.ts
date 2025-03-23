@@ -41,7 +41,6 @@ export default defineConfig({
     },
     {
       name: ' Electronic Prescriptions',
-      dependencies: ['Patient setup'],
     },
   ],
 });
