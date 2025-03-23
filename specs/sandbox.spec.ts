@@ -1,17 +1,26 @@
 import { Playwright } from '../Playwright';
-import { Base, Prescribe, Verify, Edit } from '../features';
+import { Base, Prescribe, Verify, Edit, Signing } from '../features';
 import { getPath, getDirFiles, writeFile, getEnvVars } from '../utils';
 import { HttpMethod, PrescriptionType, Role, Status } from '../enums';
-import { verify } from 'crypto';
 
-const { suite, it, beforeEach, getResponse } = new Playwright();
+const { suite, it, beforeEach, getResponse, APIContext } = new Playwright();
 
-suite('@simple Обычный рецепт', async () => {
+suite('@smoke-simple Обычный рецепт', async () => {
 	const [ENV] = getEnvVars(['env']);
 
+	// *** Данные врача и пациента ***
+	const [doctor] = getDirFiles(getPath('storage/.tmp'), 'doctor');
 	const [patient] = getDirFiles(getPath('storage/.patient'));
+
+	// *** Если данные врача либо пациента не обнаружены, прекратить запуск кода и сообщить о дальнейших действиях ***
+	if (!patient || !doctor)
+		throw new Error('Run "Patient setup" project & try again');
+
+	// *** Если данные врача либо пациента обнаружены, создать новый API контекст и продолжить запуск остального кода ***
+	const { access_token, token_type } = doctor;
 	const { id: patientId, surname, name, patronymic } = patient;
 
+	// *** Запускать для каждого теста ***
 	beforeEach(async ({ page }) => {
 		await page.goto('/');
 	});
@@ -31,7 +40,7 @@ suite('@simple Обычный рецепт', async () => {
 		await prescribe.setINN();
 		await prescribe.setDosageForm();
 		await prescribe.setDose();
-		await prescribe.setFrequency();
+		await prescribe.setFrequency('1');
 		await prescribe.setSingleDose();
 		await prescribe.setRouteOfAdministration();
 		await prescribe.setDuration('30');
@@ -48,21 +57,24 @@ suite('@simple Обычный рецепт', async () => {
 
 		await prescribe.clickSaveBtn();
 
-		// *** Пишем рецепт в storage/.tmp/simple.{env}.json ***
 		const prescriptionResponse = await getResponse(
 			page,
 			'/api/prescriptions/v1/prescriptions',
 			HttpMethod.POST,
 		);
 
+		// *** Пишем выписанный рецепт в storage/.tmp/simple.{env}.json ***
 		writeFile(
-			getPath(`storage/.tmp/${prescriptionResponse.data[0].type}.${ENV}.json`),
+			getPath(
+				`storage/.tmp/prescription.${prescriptionResponse.data[0].type}.${ENV}.json`,
+			),
 			{ ...prescriptionResponse.data[0], ...setValues },
+			{ forceUpdate: 'y' },
 		);
 	});
 
 	it('Верификация корректности выписки', async ({ page }) => {
-		const [prescription] = getDirFiles(getPath('storage/.tmp'));
+		const [prescription] = getDirFiles(getPath('storage/.tmp'), 'prescription');
 		const { number, inn, safe_code, dosageForm, dose, administrationRoute } =
 			prescription;
 
@@ -80,9 +92,9 @@ suite('@simple Обычный рецепт', async () => {
 		await verify.assertStatus(Status.NotSigned);
 	});
 
-	it.only('Редактирование', async ({ page }) => {
-		const [prescription] = getDirFiles(getPath('storage/.tmp'));
-		const { number } = prescription;
+	it('Редактирование', async ({ page }) => {
+		const [prescription] = getDirFiles(getPath('storage/.tmp'), 'prescription');
+		const { id, number } = prescription;
 
 		const edit = new Edit(page);
 
@@ -90,15 +102,39 @@ suite('@simple Обычный рецепт', async () => {
 		await edit.gotoPrescriptions();
 		await edit.viewPrescription(number);
 		await edit.clickEditBtn();
-		await edit.addComment('QA Automation + Security Engineer');
 		await edit.clickSaveBtn();
-		await edit.viewPrescription(number);
-		await edit.assertUpdatedVersion();
+		await edit.assertResponse(id);
 	});
 
-	// it('Подписание', async ({ page }) => {});
+	it('Подписание', async ({ page }) => {
+		const request = await APIContext({
+			Authorization: `${token_type} ${access_token}`,
+		});
 
-	// it('Выдача', async ({ page }) => {});
+		const [prescription] = getDirFiles(getPath('storage/.tmp'), 'prescription');
+		const { number } = prescription;
+
+		const signing = new Signing(page);
+
+		await signing.useRole(Role.Doctor);
+		await signing.gotoPrescriptions();
+		await signing.viewPrescription(number);
+		await signing.clickSignBtn();
+		await signing.assertSigningInterface();
+
+		const signingCode = (
+			await request('/api/user/identification-token?type=only_integer')
+		).token;
+
+		await signing.enterSigningCode(signingCode);
+		await signing.assertSigningCode(signingCode);
+		await signing.submitSigning();
+		await signing.assertSigningResult();
+		await signing.viewPrescription(number);
+		await signing.assertStatus(Status.Approve);
+	});
+
+	it('Выдача', async ({ page }) => {});
 
 	// it('Верификация корректности выдачи', async ({ page }) => {});
 

@@ -1,11 +1,11 @@
 import { readdirSync, readFileSync } from 'fs';
 import { getEnvVars, log } from './';
 
-export const getDirFiles = (dirPath: string): any => {
+export const getDirFiles = (dirPath: string, query: string = ''): any => {
 	const [env] = getEnvVars(['env']);
 
 	const files = readdirSync(dirPath)?.filter((file) =>
-		file.includes(`.${env}.json`),
+		!query ? file.includes(`.${env}.json`) : file.startsWith(query),
 	);
 
 	const result: any = [];

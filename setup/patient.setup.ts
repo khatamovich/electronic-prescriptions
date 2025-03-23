@@ -1,12 +1,18 @@
 import { Playwright } from '../Playwright';
-import { getEnvVars, getPath, writeFile } from '../utils';
+import { getEnvVars, getPath, writeFile, getDirFiles, log } from '../utils';
 import { HttpMethod, Role } from '../enums';
-import { Base } from '../features/base';
 
 const { it: setup, getResponse, APIContext } = new Playwright();
 
 setup('Поиск и сохранение пациента', async ({ page }) => {
-	const base = new Base(page);
+	const [doctor] = getDirFiles(getPath('storage/.tmp'), 'doctor');
+	const [patient] = getDirFiles(getPath('storage/.patient'));
+
+	if (doctor && patient) {
+		console.log(`Using cached doctor details =>`, doctor);
+		console.log(`Using cached patient details =>`, patient);
+		return;
+	}
 
 	await page.goto('/');
 
@@ -20,11 +26,13 @@ setup('Поиск и сохранение пациента', async ({ page }) =>
 	const doctorCard = page.getByRole('heading', { name: Role.Doctor });
 	await doctorCard.click();
 
-	const { access_token, token_type } = await getResponse(
+	const doctorResponse = await getResponse(
 		page,
 		loginAsRoleAPI,
 		HttpMethod.POST,
 	);
+
+	const { access_token, token_type, user } = doctorResponse;
 
 	// *** Находим пациента по ПИНФЛ ***
 	const request = await APIContext({
@@ -36,7 +44,10 @@ setup('Поиск и сохранение пациента', async ({ page }) =>
 		data: { pinfl: patientPinfl },
 	});
 
-	// *** Пишем данные в storage/.patient/patient.{env}.json ***
+	// *** Пишем данные врача в storage/.tmp/role.{env}.json ***
+	writeFile(getPath(`storage/.tmp/${user.role}.${ENV}.json`), doctorResponse);
+
+	// *** Пишем данные пациента в storage/.patient/patient.{env}.json ***
 	writeFile(
 		getPath(`storage/.patient/${patientResponse.data.id}.${ENV}.json`),
 		patientResponse.data,

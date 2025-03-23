@@ -123,10 +123,12 @@ export class Prescribe extends Base {
 		this.doseValue = `${dosage} ${measurement_unit.title}`;
 	}
 
-	async setFrequency() {
+	async setFrequency(frequency: string) {
 		await this.frequency.click();
 
-		await this.page.getByRole('option', { name: `1 раз в` }).click();
+		await this.page
+			.getByRole('option', { name: `${frequency || '1'} раз в` })
+			.click();
 	}
 
 	async setSingleDose() {
