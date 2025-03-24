@@ -1,20 +1,19 @@
 import { Playwright } from '../Playwright';
-import { Base, Prescribe, Verify, Edit, Sign, Find } from '../features';
-import { getPath, getDirFiles, writeFile, getEnvVars } from '../utils';
+import { Base, Prescribe, Verify, Edit, Sign, Find, Issue } from '../features';
+import { getPath, getDirFiles, writeFile } from '../utils';
 import { HttpMethod, PrescriptionType, Role, Status } from '../enums';
+import { isSea } from 'node:sea';
 
 const { suite, it, beforeEach, getResponse, APIContext } = new Playwright();
 
 suite('@smoke-simple Обычный рецепт', async () => {
-	const [ENV] = getEnvVars(['env']);
-
 	// *** Данные врача и пациента ***
 	const [doctor] = getDirFiles(getPath('storage/.tmp'), 'doctor');
-	const [patient] = getDirFiles(getPath('storage/.patient'));
+	const [patient] = getDirFiles(getPath('storage/.patient'), 'patient');
 
 	// *** Если данные врача либо пациента не обнаружены, прекратить запуск кода и сообщить о дальнейших действиях ***
 	if (!patient || !doctor)
-		throw new Error("Execute <npm run setup> command and then try again");
+		throw new Error('Execute <npm run setup> command and then try again');
 
 	// *** Если данные врача либо пациента обнаружены, создать новый API контекст и продолжить запуск остального кода ***
 	const { access_token, token_type } = doctor;
@@ -66,7 +65,7 @@ suite('@smoke-simple Обычный рецепт', async () => {
 		// *** Пишем выписанный рецепт в storage/.tmp/simple.{env}.json ***
 		writeFile(
 			getPath(
-				`storage/.tmp/prescription.${prescriptionResponse.data[0].type}.${ENV}.json`,
+				`storage/.tmp/prescription.${prescriptionResponse.data[0].type}.json`,
 			),
 			{ ...prescriptionResponse.data[0], ...setValues },
 			{ forceUpdate: 'y' },
@@ -74,7 +73,10 @@ suite('@smoke-simple Обычный рецепт', async () => {
 	});
 
 	it('Верификация корректности выписки', async ({ page }) => {
-		const [prescription] = getDirFiles(getPath('storage/.tmp'), 'prescription');
+		const [prescription] = getDirFiles(
+			getPath('storage/.tmp'),
+			'prescription.simple',
+		);
 		const { number, inn, safe_code, dosageForm, dose, administrationRoute } =
 			prescription;
 
@@ -93,7 +95,10 @@ suite('@smoke-simple Обычный рецепт', async () => {
 	});
 
 	it('Редактирование', async ({ page }) => {
-		const [prescription] = getDirFiles(getPath('storage/.tmp'), 'prescription');
+		const [prescription] = getDirFiles(
+			getPath('storage/.tmp'),
+			'prescription.simple',
+		);
 		const { id, number } = prescription;
 
 		const edit = new Edit(page);
@@ -111,7 +116,10 @@ suite('@smoke-simple Обычный рецепт', async () => {
 			Authorization: `${token_type} ${access_token}`,
 		});
 
-		const [prescription] = getDirFiles(getPath('storage/.tmp'), 'prescription');
+		const [prescription] = getDirFiles(
+			getPath('storage/.tmp'),
+			'prescription.simple',
+		);
 		const { number } = prescription;
 
 		const sign = new Sign(page);
@@ -135,10 +143,14 @@ suite('@smoke-simple Обычный рецепт', async () => {
 	});
 
 	it('Выдача', async ({ page }) => {
-		const [prescription] = getDirFiles(getPath('storage/.tmp'), 'prescription');
-		const { number, safe_code } = prescription;
+		const [prescription] = getDirFiles(
+			getPath('storage/.tmp'),
+			'prescription.simple',
+		);
+		const { number, safe_code, duration: totalAmount } = prescription;
 
 		const find = new Find(page);
+		const issue = new Issue(page);
 
 		await find.useRole(Role.Pharmacist, '/recipes**');
 		await find.clickIssueDrugsBtn();
@@ -147,7 +159,20 @@ suite('@smoke-simple Обычный рецепт', async () => {
 		await find.enterSafeCode(safe_code);
 		await find.assertSubmitBtn();
 		await find.submitSearch();
-		await page.waitForTimeout(1000);
+		await issue.clickPrescriptionNumber(number);
+		await issue.assertHeading();
+		await issue.setDrugName();
+		await issue.setExpirationDate();
+		await issue.setSerial();
+		await issue.setCount('1');
+		await issue.setPrice('5000');
+		await issue.clickIssueBtn();
+		await issue.clickConfirmBtn();
+		await issue.setIdentification();
+		await issue.clickContinueBtn();
+		await issue.gotoPrescriptions();
+		await issue.viewPrescription(number);
+		await issue.assertStatus(Status.PartiallyIssued);
 	});
 
 	// it('Верификация корректности выдачи', async ({ page }) => {});

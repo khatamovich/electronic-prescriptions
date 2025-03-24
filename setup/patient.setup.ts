@@ -45,11 +45,8 @@ setup('@setup Поиск и сохранение пациента', async ({ pag
 	});
 
 	// *** Пишем данные врача в storage/.tmp/role.{env}.json ***
-	writeFile(getPath(`storage/.tmp/${user.role}.${ENV}.json`), doctorResponse);
+	writeFile(getPath(`storage/.tmp/doctor.json`), doctorResponse);
 
 	// *** Пишем данные пациента в storage/.patient/patient.{env}.json ***
-	writeFile(
-		getPath(`storage/.patient/${patientResponse.data.id}.${ENV}.json`),
-		patientResponse.data,
-	);
+	writeFile(getPath(`storage/.patient/patient.json`), patientResponse.data);
 });
