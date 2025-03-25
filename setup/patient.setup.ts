@@ -8,12 +8,6 @@ setup('@setup Поиск и сохранение пациента', async ({ pag
 	const [doctor] = getDirFiles(getPath('storage/.tmp'), 'doctor');
 	const [patient] = getDirFiles(getPath('storage/.patient'));
 
-	if (doctor && patient) {
-		console.log(`Using cached doctor details =>`, doctor);
-		console.log(`Using cached patient details =>`, patient);
-		return;
-	}
-
 	await page.goto('/');
 
 	const [ENV, loginAsRoleAPI, findByDocsAPI, patientPinfl] = getEnvVars([
@@ -45,8 +39,12 @@ setup('@setup Поиск и сохранение пациента', async ({ pag
 	});
 
 	// *** Пишем данные врача в storage/.tmp/role.{env}.json ***
-	writeFile(getPath(`storage/.tmp/doctor.json`), doctorResponse);
+	writeFile(getPath(`storage/.tmp/doctor.json`), doctorResponse, {
+		forceUpdate: 'y',
+	});
 
 	// *** Пишем данные пациента в storage/.patient/patient.{env}.json ***
-	writeFile(getPath(`storage/.patient/patient.json`), patientResponse.data);
+	writeFile(getPath(`storage/.patient/patient.json`), patientResponse.data, {
+		forceUpdate: 'y',
+	});
 });
