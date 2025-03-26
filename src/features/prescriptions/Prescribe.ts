@@ -1,12 +1,12 @@
 import { type Page, type Locator } from '@playwright/test';
-import { Playwright } from '../Playwright';
-import { Base } from './';
-import { PrescriptionType } from '../enums';
-import { getRandomNumber } from '../utils';
+import { PlaywrightManager } from '../../utils';
+import { PrescriptionType } from '../../enums';
+import { getRandomNumber } from '../../utils';
+import { Base } from '../';
 
-const { expect, getResponse } = new Playwright();
+const { expect, getResponse } = PlaywrightManager;
 
-export class Prescribe extends Base {
+class Prescribe extends Base {
 	prescribeBtn: Locator;
 	INN: Locator;
 	dosageForm: Locator;
@@ -171,3 +171,5 @@ export class Prescribe extends Base {
 		await this.saveBtn.click();
 	}
 }
+
+export default Prescribe;

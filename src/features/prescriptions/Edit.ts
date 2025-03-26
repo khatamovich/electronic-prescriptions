@@ -1,8 +1,7 @@
 import { expect, type Page, type Locator } from '@playwright/test';
-import { Playwright } from '../Playwright';
-import { Verify } from './';
+import { Verify } from '../';
 
-export class Edit extends Verify {
+class Edit extends Verify {
 	editBtn: Locator;
 	saveBtn: Locator;
 	frequency: Locator;
@@ -34,3 +33,5 @@ export class Edit extends Verify {
 		expect(response.status()).toBe(200);
 	}
 }
+
+export default Edit;

@@ -1,8 +1,8 @@
 import { expect, type Page, type Locator } from '@playwright/test';
-import { Verify } from './';
+import { Verify } from '../';
 import dayjs from 'dayjs';
 
-export class Issue extends Verify {
+class Issue extends Verify {
 	heading: Locator;
 	tradeNameOption: Locator;
 	tradeName: Locator;
@@ -93,3 +93,5 @@ export class Issue extends Verify {
 		await this.continueBtn.click();
 	}
 }
+
+export default Issue;

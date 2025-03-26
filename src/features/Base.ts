@@ -1,7 +1,7 @@
 import { expect, type Page, type Locator } from '@playwright/test';
 import { Role } from '../enums';
 
-export class Base {
+class Base {
 	page: Page;
 	newEpisodeBtn: Locator;
 	plusRecipeBtn: Locator;
@@ -36,3 +36,5 @@ export class Base {
 		await this.plusRecipeBtn.click();
 	}
 }
+
+export default Base;

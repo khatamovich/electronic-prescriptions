@@ -1,8 +1,8 @@
 import { expect, type Page, type Locator } from '@playwright/test';
-import { Base } from './base';
-import { Status } from '../enums';
+import { PrescriptionStatus } from '../../enums';
+import { Base } from '../';
 
-export class Verify extends Base {
+class Verify extends Base {
 	constructor(page: Page) {
 		super(page);
 	}
@@ -51,9 +51,11 @@ export class Verify extends Base {
 		).toBeVisible();
 	}
 
-	async assertStatus(status: Status) {
+	async assertStatus(status: PrescriptionStatus) {
 		await expect(
 			this.page.getByLabel('Просмотр').getByText(status),
 		).toBeVisible();
 	}
 }
+
+export default Verify;

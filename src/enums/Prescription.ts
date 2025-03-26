@@ -3,7 +3,7 @@ export enum PrescriptionType {
 	Simple = 'Обычный',
 }
 
-export enum Status {
+export enum PrescriptionStatus {
 	NotSigned = 'Не подписан',
 	Approve = 'Подтвержден',
 	Issued = 'Выдан',

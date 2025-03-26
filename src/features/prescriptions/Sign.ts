@@ -1,11 +1,11 @@
 import { expect, type Page, type Locator } from '@playwright/test';
-import { Playwright } from '../Playwright';
-import { Verify } from './';
-import { HttpMethod } from '../enums';
+import { PlaywrightManager } from '../../utils';
+import { HttpMethod } from '../../enums';
+import { Verify } from '../';
 
-const { getResponse } = new Playwright();
+const { getResponse } = PlaywrightManager;
 
-export class Sign extends Verify {
+class Sign extends Verify {
 	signBtn: Locator;
 	signingTitle: Locator;
 	enterCodeInput: Locator;
@@ -62,3 +62,5 @@ export class Sign extends Verify {
 		expect(signingResponse.result).toBeTruthy();
 	}
 }
+
+export default Sign;

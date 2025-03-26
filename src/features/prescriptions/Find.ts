@@ -1,8 +1,7 @@
 import { expect, type Page, type Locator } from '@playwright/test';
-import { Role } from '../enums';
-import { Verify } from './';
+import { Verify } from '../';
 
-export class Find extends Verify {
+class Find extends Verify {
 	issueDrugsBtn: Locator;
 	searchTitle: Locator;
 	enterPINFLInput: Locator;
@@ -52,3 +51,5 @@ export class Find extends Verify {
 		await this.submitBtn.click();
 	}
 }
+
+export default Find;

@@ -1,15 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
-import { getEnvVars, getPath } from './utils';
-dotenv.config();
-
-const [baseURL] = getEnvVars(['base_url'], { useActiveEnv: true });
+import { getBaseURL, getPath } from './src/utils';
 
 export default defineConfig({
+  testDir: 'src/specs',
   outputDir: 'results',
   timeout: 15000,
   use: {
-    baseURL,
+    baseURL: getBaseURL(process.env.ENV as string),
     ...devices['Desktop Chrome'],
     browserName: 'chromium',
     channel: 'chrome',
@@ -28,23 +25,23 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'auth-setup',
-      testDir: 'setup',
-      testMatch: getPath('auth.setup.ts'),
+      name: 'Authorization setup',
+      testDir: getPath('src/setup'),
+      testMatch: 'authorization.ts',
     },
     {
-      name: 'patient-setup',
-      dependencies: ['auth-setup'],
-      testDir: 'setup',
-      testMatch: getPath('patient.setup.ts'),
+      name: 'Patient setup',
+      dependencies: ['Authorization setup'],
+      testDir: getPath('src/setup'),
+      testMatch: 'patient.ts',
       use: {
-        storageState: getPath(`storage/.auth/${process.env.ENV}.json`),
+        storageState: getPath(`storage/authorization.json`),
       },
     },
     {
       name: 'prescriptions',
       use: {
-        storageState: getPath(`storage/.auth/${process.env.ENV}.json`),
+        storageState: getPath(`storage/authorization.json`),
       },
     },
   ],

@@ -1,9 +1,8 @@
 import { test, expect, request, type Page } from '@playwright/test';
-import { HttpMethod } from './enums';
-import dotenv from 'dotenv';
-dotenv.config();
+import { ConfigManager, getBaseURL } from '../../utils';
+import { HttpMethod } from '../../enums';
 
-export class Playwright {
+class PlaywrightManager {
 	it: typeof test;
 	suite: typeof test.describe;
 	expect: typeof expect;
@@ -23,11 +22,11 @@ export class Playwright {
 
 	async APIContext(headers: {}) {
 		const context = await request.newContext({
-			baseURL: process.env.API_URL as string,
+			baseURL: getBaseURL(process.env.ENV, true),
 			extraHTTPHeaders: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json',
-				'Device-Id': process.env.DEVICE_ID as string,
+				'Device-Id': ConfigManager.get('DEVICE_ID')!,
 				...headers,
 			},
 		});
@@ -60,6 +59,7 @@ export class Playwright {
 				response.request().method() === method.toUpperCase() &&
 				response.url().includes(endpoint),
 		);
+
 		return (await response).json();
 	}
 
@@ -73,3 +73,5 @@ export class Playwright {
 		}, storageItems);
 	}
 }
+
+export default new PlaywrightManager();
