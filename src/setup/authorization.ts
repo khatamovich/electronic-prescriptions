@@ -16,11 +16,6 @@ setup('Авторизация', async ({ page }) => {
 		mkdirSync(getPath('storage/'), { recursive: true });
 	}
 
-	if (FileManager.exists(authStoragePath)) {
-		console.log(`Using cached version of ${authStoragePath}`);
-		return;
-	}
-
 	await page.goto('/');
 
 	await setStorageItems(page, {
