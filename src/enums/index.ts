@@ -1,6 +1,6 @@
 import { Endpoint } from './Endpoint';
 import { Purpose, Role } from './Authorization';
-import { HttpMethod } from './HTTP';
+import { HttpMethod, HttpStatus } from './HTTP';
 import { PrescriptionType, PrescriptionStatus } from './Prescription';
 
 export {
@@ -8,6 +8,7 @@ export {
 	Purpose,
 	Role,
 	HttpMethod,
+	HttpStatus,
 	PrescriptionStatus,
 	PrescriptionType,
 };

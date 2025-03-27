@@ -122,7 +122,7 @@ suite('Обычный рецепт', async () => {
 		await sign.enterSigningCode(signingCode);
 		await sign.assertSigningCode(signingCode);
 		await sign.submitSigning();
-		await sign.assertSigningResult();
+		await sign.assertResponse();
 		await sign.viewPrescription(number);
 		await sign.assertStatus(PrescriptionStatus.Approve);
 	});
@@ -146,18 +146,25 @@ suite('Обычный рецепт', async () => {
 		await issue.setDrugName();
 		await issue.setExpirationDate();
 		await issue.setSerial();
-		await issue.setCount('1');
+		await issue.setCount('29');
 		await issue.setPrice('5000');
 		await issue.clickIssueBtn();
 		await issue.clickConfirmBtn();
 		await issue.setIdentification();
 		await issue.clickContinueBtn();
+		await issue.assertResponse();
+	});
+
+	it('Верификация корректности выдачи', async ({ page }) => {
+		const prescription = FileManager.json('storage/prescription.simple');
+		const { number } = prescription;
+
+		const issue = new Issue(page);
+		await issue.useRole(Role.Pharmacist, '/recipes**');
 		await issue.gotoPrescriptions();
 		await issue.viewPrescription(number);
 		await issue.assertStatus(PrescriptionStatus.PartiallyIssued);
 	});
-
-	// it('Верификация корректности выдачи', async ({ page }) => {});
 
 	// it('Выгрузка отчетности Excel', async ({ page }) => {});
 });

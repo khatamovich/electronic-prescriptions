@@ -1,6 +1,10 @@
 import { expect, type Page, type Locator } from '@playwright/test';
+import { PlaywrightManager } from '../../utils';
 import { Verify } from '../';
+import { HttpMethod, HttpStatus } from '../../enums';
 import dayjs from 'dayjs';
+
+const { getResponse } = PlaywrightManager;
 
 class Issue extends Verify {
 	heading: Locator;
@@ -91,6 +95,17 @@ class Issue extends Verify {
 
 	async clickContinueBtn() {
 		await this.continueBtn.click();
+	}
+
+	async assertResponse() {
+		const issuingResponse = await getResponse(
+			this.page,
+			'/api/prescriptions/v1/prescriptions/issue',
+			HttpMethod.POST,
+			false,
+		);
+
+		expect(issuingResponse.status()).toEqual(HttpStatus.OK);
 	}
 }
 

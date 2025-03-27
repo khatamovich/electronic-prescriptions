@@ -1,5 +1,9 @@
 import { expect, type Page, type Locator } from '@playwright/test';
+import { PlaywrightManager } from '../../utils';
 import { Verify } from '../';
+import { HttpMethod, HttpStatus } from '../../enums';
+
+const { getResponse } = PlaywrightManager;
 
 class Edit extends Verify {
 	editBtn: Locator;
@@ -22,15 +26,14 @@ class Edit extends Verify {
 	}
 
 	async assertResponse(prescriptionId: string) {
-		const response = await this.page.waitForResponse(
-			(response) =>
-				response.request().method() === 'PUT' &&
-				response
-					.url()
-					.includes(`/api/prescriptions/v1/prescriptions/${prescriptionId}`),
+		const editingResponse = await getResponse(
+			this.page,
+			`/api/prescriptions/v1/prescriptions/${prescriptionId}`,
+			HttpMethod.PUT,
+			false,
 		);
 
-		expect(response.status()).toBe(200);
+		expect(editingResponse.status()).toEqual(HttpStatus.OK);
 	}
 }
 

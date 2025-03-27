@@ -22,7 +22,7 @@ class PlaywrightManager {
 
 	async APIContext(headers: {}) {
 		const context = await request.newContext({
-			baseURL: getBaseURL(process.env.ENV, true),
+			baseURL: getBaseURL(process.env.ENV!, true),
 			extraHTTPHeaders: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json',
@@ -53,6 +53,7 @@ class PlaywrightManager {
 		page: Page,
 		endpoint: string,
 		method: typeof this.httpMethod = this.httpMethod,
+		isJSON: boolean = true,
 	) {
 		const response = page.waitForResponse(
 			(response) =>
@@ -60,7 +61,7 @@ class PlaywrightManager {
 				response.url().includes(endpoint),
 		);
 
-		return (await response).json();
+		return isJSON ? (await response).json() : await response;
 	}
 
 	async setStorageItems(page: Page, storageItems: object): Promise<void> {

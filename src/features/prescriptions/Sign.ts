@@ -52,7 +52,7 @@ class Sign extends Verify {
 		await this.submitBtn.click();
 	}
 
-	async assertSigningResult() {
+	async assertResponse() {
 		const signingResponse = await getResponse(
 			this.page,
 			'/api/prescriptions/v1/prescriptions/signing',
