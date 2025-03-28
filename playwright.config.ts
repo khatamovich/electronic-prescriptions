@@ -3,6 +3,7 @@ import { getBaseURL, getPath } from './src/utils';
 
 export default defineConfig({
   testDir: 'src/specs',
+  testMatch: ['*.smoke.ts', '*.regress.ts', '*.spec.ts'],
   outputDir: 'results',
   timeout: 15000,
   use: {

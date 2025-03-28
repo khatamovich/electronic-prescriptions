@@ -165,6 +165,4 @@ suite('Обычный рецепт', async () => {
 		await issue.viewPrescription(number);
 		await issue.assertStatus(PrescriptionStatus.PartiallyIssued);
 	});
-
-	// it('Выгрузка отчетности Excel', async ({ page }) => {});
 });
