@@ -1,5 +1,9 @@
 import { expect, type Page, type Locator } from '@playwright/test';
+import { PlaywrightManager } from '../utils';
 import { Role } from '../enums';
+import dayjs from 'dayjs';
+
+const { getResponse } = PlaywrightManager;
 
 class Base {
 	page: Page;
@@ -8,7 +12,6 @@ class Base {
 
 	constructor(page: Page) {
 		this.page = page;
-
 		this.newEpisodeBtn = page.getByRole('button', { name: '+ Новый эпизод' });
 		this.plusRecipeBtn = page.getByRole('button', { name: '+ Рецепт' });
 	}

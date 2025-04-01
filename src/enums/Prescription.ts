@@ -5,6 +5,7 @@ export enum PrescriptionType {
 
 export enum PrescriptionStatus {
 	NotSigned = 'Не подписан',
+	AwaitingConfirmation = 'Ожидает подтверждения',
 	Approve = 'Подтвержден',
 	Issued = 'Выдан',
 	PartiallyIssued = 'Частично выдан',

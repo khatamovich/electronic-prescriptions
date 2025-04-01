@@ -5,7 +5,7 @@ export enum Purpose {
 export enum Role {
 	Director = 'Директор',
 	Doctor = 'Врач',
-	PrescriptionViewere = 'Рецензент',
+	PrescriptionReviewer = 'Рецензент',
 	Pharmacist = 'Фармацевт',
 	FundAdministration = 'АФС',
 }

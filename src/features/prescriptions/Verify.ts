@@ -1,5 +1,5 @@
 import { expect, type Page, type Locator } from '@playwright/test';
-import { PrescriptionStatus } from '../../enums';
+import { PrescriptionStatus, PrescriptionType } from '../../enums';
 import { Base } from '../';
 
 class Verify extends Base {
@@ -7,8 +7,8 @@ class Verify extends Base {
 		super(page);
 	}
 
-	async gotoPrescriptions() {
-		await this.page.goto('/recipes?type=simple');
+	async gotoPrescriptions(type: string = 'simple') {
+		await this.page.goto(`/recipes?type=${type}`);
 	}
 
 	async viewPrescription(prescriptionNumber: string) {
@@ -53,7 +53,7 @@ class Verify extends Base {
 
 	async assertStatus(status: PrescriptionStatus) {
 		await expect(
-			this.page.getByLabel('Просмотр').getByText(status),
+			this.page.getByLabel('Просмотр').getByText(status, { exact: true }),
 		).toBeVisible();
 	}
 }

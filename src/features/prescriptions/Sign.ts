@@ -29,7 +29,17 @@ class Sign extends Verify {
 		});
 	}
 
-	async clickSignBtn() {
+	async clickSignBtn(type: string = 'simple') {
+		if (type === 'reimbursement') {
+			await this.page
+				.getByRole('button', {
+					name: 'Отправить на утверждение',
+				})
+				.click();
+
+			return;
+		}
+
 		await this.signBtn.click();
 	}
 

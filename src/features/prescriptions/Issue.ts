@@ -1,7 +1,7 @@
 import { expect, type Page, type Locator } from '@playwright/test';
-import { PlaywrightManager } from '../../utils';
+import { FileManager, PlaywrightManager } from '../../utils';
 import { Verify } from '../';
-import { HttpMethod, HttpStatus } from '../../enums';
+import { Endpoint, HttpMethod, HttpStatus } from '../../enums';
 import dayjs from 'dayjs';
 
 const { getResponse } = PlaywrightManager;
@@ -21,6 +21,7 @@ class Issue extends Verify {
 	continueBtn: Locator;
 
 	confirmationTxt: string;
+	maxPrice: number;
 
 	constructor(page: Page) {
 		super(page);
@@ -56,9 +57,23 @@ class Issue extends Verify {
 		await expect(this.heading).toBeVisible();
 	}
 
-	async setDrugName() {
+	async setDrugName(prescriptionId: string = '') {
 		await this.tradeName.click();
 		await this.tradeNameOption.click();
+
+		if (prescriptionId) {
+			const releasedPrice = await getResponse(
+				this.page,
+				`api/prescriptions/v1/prescriptions/${prescriptionId}/release-price`,
+			);
+
+			const drug = FileManager.json('storage/drug');
+
+			FileManager.store('storage/drug.json', {
+				...drug,
+				price: { ...drug.price, max: releasedPrice.max_price },
+			});
+		}
 	}
 
 	async setExpirationDate() {
@@ -78,6 +93,7 @@ class Issue extends Verify {
 	}
 
 	async setPrice(issuePrice: string) {
+		console.log(issuePrice);
 		await this.issuePrice.fill(issuePrice);
 	}
 
@@ -102,7 +118,7 @@ class Issue extends Verify {
 			this.page,
 			'/api/prescriptions/v1/prescriptions/issue',
 			HttpMethod.POST,
-			false,
+			true,
 		);
 
 		expect(issuingResponse.status()).toEqual(HttpStatus.OK);

@@ -67,7 +67,7 @@ class Prescribe extends Base {
 		await this.prescribeBtn.click();
 	}
 
-	async setINN() {
+	async setINN(reimbursementINN: string = '') {
 		await this.INN.click();
 
 		const INNsResponse = await getResponse(
@@ -79,9 +79,13 @@ class Prescribe extends Base {
 
 		const { title } = INNsResponse.data[randomIndex];
 
-		await this.page.getByRole('option', { name: title }).click();
+		await this.page
+			.getByRole('option', { name: reimbursementINN || title })
+			.click();
 
-		this.INNValue = title;
+		reimbursementINN
+			? (this.INNValue = reimbursementINN)
+			: (this.INNValue = title);
 	}
 
 	async setDosageForm() {
@@ -96,7 +100,7 @@ class Prescribe extends Base {
 
 		const { title } = dosageFormsResponse.data[randomIndex];
 
-		await this.page.getByRole('option', { name: title }).click();
+		await this.page.getByRole('option', { name: title, exact: true }).click();
 
 		this.dosageFormValue = title;
 	}

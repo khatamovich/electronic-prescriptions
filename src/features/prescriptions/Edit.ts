@@ -30,7 +30,7 @@ class Edit extends Verify {
 			this.page,
 			`/api/prescriptions/v1/prescriptions/${prescriptionId}`,
 			HttpMethod.PUT,
-			false,
+			true,
 		);
 
 		expect(editingResponse.status()).toEqual(HttpStatus.OK);

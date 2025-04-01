@@ -146,7 +146,7 @@ suite('Обычный рецепт', async () => {
 		await issue.setDrugName();
 		await issue.setExpirationDate();
 		await issue.setSerial();
-		await issue.setCount('29');
+		await issue.setCount('1');
 		await issue.setPrice('5000');
 		await issue.clickIssueBtn();
 		await issue.clickConfirmBtn();

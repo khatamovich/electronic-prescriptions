@@ -20,9 +20,9 @@ class PlaywrightManager {
 		this.setStorageItems = this.setStorageItems.bind(this);
 	}
 
-	async APIContext(headers: {}) {
+	async APIContext(headers: {}, baseURL: string = '') {
 		const context = await request.newContext({
-			baseURL: getBaseURL(process.env.ENV!, true),
+			baseURL: baseURL || getBaseURL(process.env.ENV!, true),
 			extraHTTPHeaders: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json',
@@ -37,15 +37,18 @@ class PlaywrightManager {
 				method: HttpMethod.GET,
 				data: {},
 			},
+			debug: boolean = false,
 		) => {
 			const { method, data } = options;
 
 			const response =
-				method === HttpMethod.POST || method === HttpMethod.PUT
+				method === HttpMethod.POST ||
+				method === HttpMethod.PUT ||
+				method === HttpMethod.Patch
 					? context[method](endpoint, { data })
 					: context.get(endpoint);
 
-			return (await response).json();
+			return debug === true ? await response : (await response).json();
 		};
 	}
 
@@ -53,7 +56,7 @@ class PlaywrightManager {
 		page: Page,
 		endpoint: string,
 		method: typeof this.httpMethod = this.httpMethod,
-		isJSON: boolean = true,
+		debug: boolean = false,
 	) {
 		const response = page.waitForResponse(
 			(response) =>
@@ -61,7 +64,7 @@ class PlaywrightManager {
 				response.url().includes(endpoint),
 		);
 
-		return isJSON ? (await response).json() : await response;
+		return debug ? await response : (await response).json();
 	}
 
 	async setStorageItems(page: Page, storageItems: object): Promise<void> {
