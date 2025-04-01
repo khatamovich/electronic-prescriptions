@@ -155,7 +155,7 @@ suite('Реимбурсационный рецепт', async () => {
 		);
 
 		if (drugsAvailableForIssue.length < 1) {
-			throw new Error('No reimbursement drug found, add one and try again');
+			throw new Error('Could not find any suitable drugs');
 		}
 
 		const randomDrug =
