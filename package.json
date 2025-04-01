@@ -5,7 +5,9 @@
   "scripts": {
     "start": "npx playwright test --project prescriptions",
     "debug": "npx playwright test --debug",
-    "setup": "npx playwright test --project 'Patient setup'"
+    "setup": "npx playwright test --project 'Patient setup'",
+    "smoke:simple": "npx playwright test ./src/specs/simple.smoke.ts",
+    "smoke:reimbursement": "npx playwright test ./src/specs/reimbursement.smoke.ts"
   },
   "keywords": [],
   "author": "",

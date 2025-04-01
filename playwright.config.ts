@@ -6,6 +6,7 @@ export default defineConfig({
   testMatch: ['*.smoke.ts', '*.regress.ts', '*.spec.ts'],
   outputDir: 'results',
   timeout: 15000,
+  maxFailures: 1,
   workers: 1,
   use: {
     baseURL: getBaseURL(process.env.ENV as string),

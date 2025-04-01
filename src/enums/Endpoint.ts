@@ -6,4 +6,5 @@ export enum Endpoint {
 	ReimbursementCategories = '/api/prescriptions/v1/reimbursements/categories',
 	ReimbursementDrugs = '/api/prescriptions/v1/reimbursements/drugs',
 	ReimbursementTNs = '/api/prescriptions/v1/drug-trade-names',
+	PatientPrescriptions = '/api/prescriptions/v1/prescriptions',
 }

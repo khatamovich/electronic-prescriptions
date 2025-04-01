@@ -29,6 +29,7 @@ suite('Реимбурсационный рецепт', async () => {
 	// *** Данные врача и пациента ***
 	const doctor = FileManager.json('storage/doctor');
 	const patient = FileManager.json('storage/patient');
+	const prescriptions = FileManager.json('storage/prescriptions');
 
 	// *** Если данные врача либо пациента не обнаружены, прекратить запуск кода и сообщить о дальнейших действиях ***
 	if (!patient || !doctor) throw new Error('Execute "npm run setup" command');
@@ -36,6 +37,15 @@ suite('Реимбурсационный рецепт', async () => {
 	// *** Если данные врача либо пациента обнаружены продолжить запуск остального кода ***
 	const { access_token, token_type } = doctor;
 	const { id: patientId, surname, name, patronymic, pinfl } = patient;
+
+	if (
+		prescriptions.ignoredDrugIds.length >= 4 &&
+		prescriptions.patientId === patient.id
+	) {
+		throw new Error(
+			`Patient 5196829 has reached the maximum prescription limit for this month`,
+		);
+	}
 
 	beforeEach(async ({ page }) => {
 		await page.goto('/');
@@ -49,6 +59,25 @@ suite('Реимбурсационный рецепт', async () => {
 
 		const fundRequest = await APIContext({
 			Authorization: `${token_type} ${ConfigManager.get('ACCESS_TOKEN_FUND')}`,
+		});
+
+		// *** Получить список выписанных рецептов ***
+		const { data: prescriptions } = await request(
+			`${Endpoint.PatientPrescriptions}?patient_id=${patientId}&type=reimbursement&statuses[0]=approve&statuses[1]=issued`,
+		);
+
+		const ignoredDrugIds = prescriptions
+			.filter(
+				({ drug_appointment }) =>
+					dayjs(drug_appointment.created_at).format('MM') ===
+					dayjs().format('MM'),
+			)
+			.map(({ drug_appointment }) => drug_appointment.medication.id);
+
+		// Сохранить черный список id МНН в storage
+		FileManager.store('storage/prescriptions.json', {
+			patientId,
+			ignoredDrugIds,
 		});
 
 		// *** Получить список болезней пациента ***
@@ -120,11 +149,14 @@ suite('Реимбурсационный рецепт', async () => {
 		);
 
 		const drugsAvailableForIssue = reimbursementDrugs.filter(
-			(drug: any) => drug.available_for_issue === true,
+			(drug: any) =>
+				drug.available_for_issue === true &&
+				!ignoredDrugIds.includes(drug.inn.id),
 		);
 
-		if (drugsAvailableForIssue.length < 1)
+		if (drugsAvailableForIssue.length < 1) {
 			throw new Error('No reimbursement drug found, add one and try again');
+		}
 
 		const randomDrug =
 			drugsAvailableForIssue[getRandomNumber(drugsAvailableForIssue.length)];

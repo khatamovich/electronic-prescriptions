@@ -93,7 +93,6 @@ class Issue extends Verify {
 	}
 
 	async setPrice(issuePrice: string) {
-		console.log(issuePrice);
 		await this.issuePrice.fill(issuePrice);
 	}
 
